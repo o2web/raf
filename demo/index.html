@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<title>raf.js</title>
+    <link rel="stylesheet" href="assets/css/application.css">
+    <script src="assets/js/modernizr.custom.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="assets/js/scrollEvents.js"></script>
+    <script src="../raf.js"></script>
+    <script src="assets/js/demo.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+    	<h1>
+    		<div>request animation frame</div>
+    		<span class="blue">raf.js</span>
+    	</h1>
+
+	  	<section class="intro dark">
+
+	  		<div class="container message">
+	  			ScrollEvents using raf. Should be smoother.
+	  			<div><em>Scroll to see.
+	  		</div>
+
+	  	</section>
+
+	  	<section class="demo-scrollevent">
+	  		<h2>1</h2>
+	  		<div class="message container translate left">
+	  		</div>
+
+		  	<div class="container">
+		  		<code class="eval">
+$('.demo-scrollevent .message').scrollEvents({
+	visible: function(event){
+		event.selection.removeClass('left');
+	},
+	down: function(event){
+		event.selection.addClass('left');
+	}
+});
+				</code>
+	  		</div>
+		</section>
+
+	 </div>
+  </body>
+</html>

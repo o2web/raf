@@ -1,0 +1,150 @@
+// ==========================================================================
+//  MIXINS
+// ========================================================================== 
+
+// FONT-FACE
+// exemple :
+// +font-face('bebasneue', '../fonts/BebasNeue-webfont', 'bebasneue')
+@mixin font-face($family, $path, $svg: null, $weight: normal, $style: normal)
+  @if $svg==null
+    $svg: $family
+  @font-face
+    font-family: $family
+    src: url('#{$path}.eot')
+    src: url('#{$path}.eot?#iefix') format('embedded-opentype'), url('#{$path}.woff') format('woff'), url('#{$path}.ttf') format('truetype'), url('#{$path}.svg##{$svg}') format('svg')
+    font-weight: $weight
+    font-style: $style
+
+//
+//
+// ALIGN CHILDREN
+// la fonction «align-middle» qui peut être utilisée peut importe l'alignement vertical
+@mixin align-children($v-align: middle)
+  @include inlineb
+  vertical-align: $v-align
+  &:before
+    content: ""
+    @include inlineb()
+    height: 100%
+    min-height: inherit
+    width: 0
+    vertical-align: $v-align
+    margin-right: -0.25em
+  &>*
+    @include inlineb
+    vertical-align: $v-align
+
+
+// PREFIXED PROPS
+// exemple :
+// +prefix(transform, translate3d(0,0,0) )
+// +prefix(transition, transform 300ms linear, opacity 300ms linear 200ms )
+
+@mixin prefix($prop, $values...)
+  $prefixes: -webkit-, -moz-, -ms-, -o-, null
+  @for $p from 1 through length($prefixes)
+    $results: ()
+    @for $i from 1 through length($values)
+      $val: nth($values, $i)
+      $res: ()
+      @for $k from 1 through length($val)
+        @if index( (transform, box-sizing, box-shadow, filter) , nth($val, $k) )
+          $res: append($res, #{nth($prefixes, $p)}#{nth($val, $k)}, space)
+        @else 
+          $res: append($res, #{nth($val, $k)}, space) 
+      $results: append($results, $res, comma)
+    #{nth($prefixes, $p)}#{$prop}: $results
+
+@function debug($var)
+  @return $var
+
+// CLEARFIX
+@mixin clearfix()
+  zoom: 1
+  &:before, &:after
+    content: "\0020" 
+    display: block 
+    height: 0 
+    overflow: hidden
+  &:after
+    clear: both
+
+// INLINE-BLOCK
+@mixin inlineb()
+  display: inline-block
+  *display: inline
+  zoom: 1
+
+// OPACITY
+@mixin opacity($n)
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+($n*100)+")"
+  filter: alpha(opacity=($n*100))
+  opacity: $n
+
+// DROP SHADOW/BOX SHADOW
+@mixin box-shadow($val...) 
+  -webkit-box-shadow: $val
+  -moz-box-shadow: $val
+  box-shadow: $val
+@mixin gradient($from, $to)
+  background-image: -webkit-gradient(linear, left bottom, right top, color-stop(0, $from),color-stop(1, $to))
+  background-image: -o-linear-gradient(right top, $from 0%, $to 100%)
+  background-image: -moz-linear-gradient(right top, $from 0%, $to 100%)
+  background-image: -webkit-linear-gradient(right top, $from 0%, $to 100%)
+  background-image: -ms-linear-gradient(right top, $from 0%, $to 100%)
+  background-image: linear-gradient(to right top, $from 0%, $to 100%)
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=#{ie_hex_str($from)}, endColorstr=#{ie_hex_str($to)},GradientType=0 )
+// BORDER RADIUS
+// exemple :
+// @include border-radius(10px)
+//  - ou -
+// @include border-radius(50px 10px 50px 10px)
+@mixin border-radius($radius...)
+  -webkit-border-radius: $radius
+  -moz-border-radius: $radius
+  border-radius: $radius
+
+// FONT SMOOTHING
+@mixin font-smoothing($value: on) 
+  @if $value == on 
+    -webkit-font-smoothing: antialiased
+    -moz-osx-font-smoothing: grayscale
+
+  @else 
+    -webkit-font-smoothing: subpixel-antialiased
+    -moz-osx-font-smoothing: auto
+
+// FLEXIBLE GRID, FIXED MARGINS
+@mixin grid($cols: 3, $medium: 25px)
+  font-size: 0
+  word-spacing: 0
+  line-height: 0
+  margin-left: ($medium/-2)
+  margin-right: ($medium/-2)
+  &>*
+    @include inlineb
+    font-size: $em-base
+    font-size: initial
+    word-spacing: normal
+    line-height: 1
+    width: round(100% / $cols * 100) / 100
+    padding: 0 ($medium/2) $medium
+
+// COLUMNS
+@mixin columns($n, $gap)
+  -webkit-column-count: $n
+  -moz-column-count: $n
+  column-count: $n
+  @if $gap
+    -webkit-column-gap: $gap
+    -moz-column-gap: $gap
+    column-gap: $gap
+
+// IE : Équivalent ie7 d'un :before
+@mixin ieBefore($content)
+  *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '#{$content}' + this.innerHTML)
+
+// IE : Équivalent ie7 d'un :after
+@mixin ieAfter($content)
+  *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = this.innerHTML + '#{$content}')
+
