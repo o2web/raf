@@ -270,8 +270,8 @@ function minMax(n,min,max){
 			});
 
 			// declare event if not already there
-			// if(!window.raf.events['scroll'])
-			window.raf.on('scroll', eventScroller);
+			if(!window.raf.events['scroll'])
+				window.raf.on('scroll', eventScroller);
 			$win.off('resize',resizeScroller).on('resize',resizeScroller);
 			return this;
 		}

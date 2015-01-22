@@ -3,7 +3,7 @@ jQuery(document).ready(function($){
 
   // générer des cercles, parce que les placer à la main c'est trop long
   var $circles = $('.demo-parallax .circles');
-  var count = 60;
+  var count = 100;
   var colors = ['turquoise','blue','violet'];
   var zMin = -5;
   var zMax = 5;
@@ -17,8 +17,6 @@ jQuery(document).ready(function($){
     });
     $circles.append($circle);
   }
-
-
 
 	// FIRE CODE TAGS
   $(window).on('load', function(){

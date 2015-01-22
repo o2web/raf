@@ -1,5 +1,5 @@
 @import url(normalize.min.css);
-@import "http://fonts.googleapis.com/css?family=Amatic+SC";
+@import url(http://fonts.googleapis.com/css?family=Amatic+SC);
 *,
 *:before,
 *:after {
@@ -13,10 +13,10 @@ button,
 input,
 select,
 textarea {
-  color: #fff; }
+  color: white; }
 
 body {
-  background: #000;
+  background: black;
   position: relative;
   margin: 0;
   padding: 0; }
@@ -38,14 +38,14 @@ ul {
 
 ::-moz-selection {
   background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  color: white;
   border: none;
   outline: none;
   text-shadow: none; }
 
 ::selection {
   background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  color: white;
   border: none;
   outline: none;
   text-shadow: none; }
@@ -63,7 +63,7 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #cccccc;
   margin: 1em 0;
   padding: 0; }
 
@@ -84,8 +84,8 @@ sub {
 
 .chromeframe {
   margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
+  background: #cccccc;
+  color: black;
   padding: 0.2em 0; }
 
 body {
@@ -159,7 +159,7 @@ section {
   min-height: 960px; }
   section.dark {
     background-color: #363636;
-    color: #fff; }
+    color: white; }
   section.enjoy {
     min-height: 0; }
 
@@ -180,7 +180,7 @@ h2 {
 
 h1 {
   padding: 50px;
-  background: #fff;
+  background: white;
   color: #363636;
   font-size: 4em;
   text-align: center;
@@ -190,32 +190,32 @@ img {
   max-width: 100%; }
 
 code {
-  background: #fff;
+  background: white;
   color: #0e0e0e;
   padding: 1em;
-  border: 2px solid #125EFF;
+  border: 2px solid #125eff;
   white-space: pre;
   display: block;
   overflow: auto;
   -webkit-box-shadow: inset 0 0px 5px 0 rgba(0, 0, 0, 0.5);
   box-shadow: inset 0 0px 5px 0 rgba(0, 0, 0, 0.5); }
   code span {
-    color: #bbb; }
+    color: #bbbbbb; }
 
 .blue {
-  color: #125EFF; }
+  color: #125eff; }
 
 .turquoise {
-  color: #00FFE0; }
+  color: #00ffe0; }
 
 .violet {
-  color: #9D267C; }
+  color: #9d267c; }
 
 .message {
   padding: 50px;
   margin-bottom: 50px;
   font-size: 3em;
-  background: #fff;
+  background: white;
   border: 1px solid #929292;
   text-align: center;
   position: relative;
@@ -223,10 +223,10 @@ code {
   .dark .message {
     background: #363636; }
   .message em {
-    color: #125EFF;
+    color: #125eff;
     font-style: normal; }
     .message em.violet {
-      color: #9D267C; }
+      color: #9d267c; }
   .message.translate {
     -webkit-transition: -webkit-transform 2400ms cubic-bezier(0.4, 0, 0.16, 1);
     -moz-transition: -moz-transform 2400ms cubic-bezier(0.4, 0, 0.16, 1);
@@ -257,17 +257,17 @@ code {
       -o-transition: color 300ms cubic-bezier(0.4, 0, 0.16, 1);
       transition: color 300ms cubic-bezier(0.4, 0, 0.16, 1); }
     .message.color.turquoise {
-      border: 4px solid #00FFE0;
-      color: #00FFE0; }
+      border: 4px solid #00ffe0;
+      color: #00ffe0; }
       .message.color.turquoise em {
-        color: #00FFE0; }
+        color: #00ffe0; }
   .message.sticky {
     height: 600px;
     position: relative; }
     .message.sticky nav {
       position: relative;
-      background: #fff;
-      color: #125EFF;
+      background: white;
+      color: #125eff;
       padding: 25px;
       width: 100%;
       max-width: 860px;
@@ -275,16 +275,16 @@ code {
       .message.sticky nav.sticked {
         position: fixed;
         top: 50px;
-        color: #00FFE0; }
+        color: #00ffe0; }
       .message.sticky nav.contained {
         position: absolute;
         bottom: 50px;
         top: auto;
-        color: #125EFF; }
+        color: #125eff; }
   .message.inverted nav {
     position: relative;
-    background: #fff;
-    color: #125EFF;
+    background: white;
+    color: #125eff;
     padding: 25px;
     width: 100%;
     max-width: 860px;
@@ -303,7 +303,7 @@ code {
   height: 100%;
   width: 100%;
   z-index: 0;
-  background: #125EFF; }
+  background: #125eff; }
   .overlay.delta {
     width: 0px;
     -webkit-transition: width 300ms ease-out;
@@ -359,7 +359,7 @@ button {
     display: block;
     padding: 20px;
     line-height: 40px;
-    background: #00FFE0;
+    background: #00ffe0;
     -webkit-transition: -webkit-transform 160ms ease-in-out, z-index 0ms linear 80ms;
     -moz-transition: -moz-transform 160ms ease-in-out, z-index 0ms linear 80ms;
     -ms-transition: -ms-transform 160ms ease-in-out, z-index 0ms linear 80ms;
@@ -391,8 +391,8 @@ button {
     button span.idle {
       position: relative;
       z-index: 1;
-      background: #125EFF;
-      color: #fff;
+      background: #125eff;
+      color: white;
       -webkit-transform: rotateX(0deg);
       -moz-transform: rotateX(0deg);
       -ms-transform: rotateX(0deg);
@@ -434,7 +434,7 @@ button {
       background: transparent; }
 
 .demo-parallax {
-  background: #fff; }
+  background: white; }
   .demo-parallax .container {
     position: relative;
     z-index: 0;
@@ -584,7 +584,7 @@ textarea {
 @media print {
   * {
     background: transparent !important;
-    color: #000 !important;
+    color: black !important;
     box-shadow: none !important;
     text-shadow: none !important; }
 
@@ -605,7 +605,7 @@ textarea {
 
   pre,
   blockquote {
-    border: 1px solid #999;
+    border: 1px solid #999999;
     page-break-inside: avoid; }
 
   thead {
@@ -629,5 +629,3 @@ textarea {
   h2,
   h3 {
     page-break-after: avoid; } }
-
-/*# sourceMappingURL=application.css.map */
