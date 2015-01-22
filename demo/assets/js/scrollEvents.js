@@ -444,7 +444,7 @@ function minMax(n,min,max){
 				removed.sort(function(a, b){return b.ev.se-a.ev.se});
 				for(var k=0;k<removed.length; k++){
 					var e = removed[k];
-					if(e.ev && !e.ev.once) window.raf.off('scroll', e.ev.visibleFn);
+					if(e.ev && !e.ev.travel) window.raf.off(e.selection, 'scroll', e.ev.visibleFn);
 					se.items.splice(e.ev.se,1);
 				}
 				for(var i=0; i<se.items.length; i++){
