@@ -33,13 +33,13 @@
       clearTimeout(id);
     };
 
-  // check if object is empty
-  // http://stackoverflow.com/questions/3426979/javascript-checking-if-an-object-has-no-properties-or-if-a-map-associative-arra#answer-3427021
-  function isEmpty(map){
-    for(var key in map)
-      if (map.hasOwnProperty(key))
-        return false;
-    return true;
+  // count keys in object array
+  function count(obj){
+    var count = 0;
+    for(var key in obj)
+      if (obj.hasOwnProperty(key))
+        count++;
+    return count;
   }
 
 
@@ -47,6 +47,7 @@
   //
   // RAF
   window.raf =  {};
+  // raf object
   function raf(){
     //
     //
@@ -57,20 +58,41 @@
     this.events = [];
     // raf request
     this.request = undefined;
+    //  scroll data
+    this.scroll = {
+      top: window.pageYOffset,
+      left: window.pageYOffset
+    };
+    // pointer data
+    this.pointer = {
+      x: 0,
+      y: 0
+    }
+
     // checks
     this.check = {
+      // detect if scroll position has changed
       scroll: function(e){
-        // console.log('scroll');
+        var current = {
+          top: window.pageYOffset,
+          left: window.pageXOffset
+        }
+        if(current.top != self.scroll.top || current.left != self.scroll.left){
+          for(var i=0; i<self.events.scroll.length; i++){
+            self.events.scroll[i].callback();
+          }
+        }
       },
-      mousemove: function(e){
-        // console.log('mousemove');
+      // detect if pointer has moved
+      pointermove: function(e){
+
       }
     }
 
     //
     //
     // RAF on()
-    self.on = function(){
+    this.on = function(){
 
       // arguments passed to the function will go here
       var event = {
@@ -92,40 +114,44 @@
 
       // create / append event
       var eventIndex = self.events.indexOf(event.type);
-      if(eventIndex<0) self.events[event.type] = [];
+      if(eventIndex<0){
+        self.events[event.type] = [];
+        self.eventsCount = count(self.events);
+      }
       self.events[event.type].push(event);
 
-      // start raf if not already started
+      // start raf
       self.start();
 
     }
 
     // loop animation
-    self.loop = function() {
-      // console.log(self);
-      if(isEmpty(self.events)) return self.stop();
+    this.loop = function() {
+      // stop loop if no event to check
+      if(!self.eventsCount) return self.stop();
       // parse each event
       for(var e in self.events){
         if(e=='scroll') self.check.scroll(e);
-        if(e=='mousemove') self.check.mousemove(e);
+        if(e=='pointermove') self.check.pointermove(e);
       };
       // request another frame
       self.request = window.requestAnimationFrame(self.loop);
     }
 
     // start animation
-    self.start = function(){
+    this.start = function(){
       if(!self.request) self.loop();
     }
 
     // stop animation
-    self.stop = function(){
+    this.stop = function(){
       if(self.request){
         window.cancelAnimationFrame(self.request);
-        this.request = undefined;
+        self.request = undefined;
       }
-      return false;
     }
+
+    return self;
 
   }
 
