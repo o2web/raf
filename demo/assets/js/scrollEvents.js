@@ -407,7 +407,7 @@ function minMax(n,min,max){
 									if(ev.flag==flag){
 										if(args=='disable'){
 											ev.disabled = true;
-											if(ev.travel) window.raf.off(e.container, 'scroll', ev.travel);
+											if(ev.travel) window.raf.off(ev.container, 'scroll', ev.travel);
 										}
 										else if(args=='enable'){
 											ev.disabled = false;
@@ -423,7 +423,7 @@ function minMax(n,min,max){
 								else{
 									if(args=='disable'){
 										ev.disabled = true;
-										if(ev.travel) window.raf.off(e.container, 'scroll', ev.travel);
+										if(ev.travel) window.raf.off(ev.container, 'scroll', ev.travel);
 									}
 									else if(args=='enable'){
 										ev.disabled = false;
@@ -444,7 +444,7 @@ function minMax(n,min,max){
 				removed.sort(function(a, b){return b.ev.se-a.ev.se});
 				for(var k=0;k<removed.length; k++){
 					var e = removed[k];
-					if(e.ev && !e.ev.travel) window.raf.off(e.selection, 'scroll', e.ev.visibleFn);
+					if(e.ev && !e.ev.travel) window.raf.off(e.container, 'scroll', e.ev.visibleFn);
 					se.items.splice(e.ev.se,1);
 				}
 				for(var i=0; i<se.items.length; i++){
