@@ -1,6 +1,6 @@
-// raj.js
+// raf.js
 // o2web.ca
-// 2014
+// 2015
 
 // RAF polyfill
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -42,18 +42,55 @@
     return count;
   }
 
+  // unset key in array
+  function unset(key, array){
+    return array.splice(key, 1);
+  }
+
+  // find hook inside an event's array
+  function findHook(hook, event){
+    var key = -1;
+    for(var i=0; i<event.length; i++)
+      if(event[i].delegate == hook.delegate && event[i].callback == hook.callback) key = i;
+    return key;
+  }
+
+  // jquery window
+  $win = $(window);
+
+
+  //
+  //
+  // EVENT OBJECT
+  function hookObj(){
+    var hook = {};
+    hook.event = false;
+    hook.callback = false;
+    hook.data = false;
+    hook.delegate = $win;
+
+    // parse arguments
+    for(var i=0; i<arguments.length; i++){
+      var arg = arguments[i];
+      var type = typeof arg;
+      if(type=='string') hook.event = arg
+      else if(arg instanceof jQuery || type=='boolean') hook.delegate = arg
+      else if(type=='function') hook.callback = arg
+      else if(type=='object') hook.data = arg;
+    }
+    return hook;
+  }
 
   //
   //
   // RAF
-  window.raf =  {};
-  // raf object
+  // structure :
+  // raf -> events -> hooks -> callback()
   function raf(){
     //
     //
     // SETUP
     var self = this;
-
     // events holder
     this.events = [];
     // raf request
@@ -69,19 +106,22 @@
       y: 0
     }
 
-    // checks
-    this.check = {
+    // detections
+    this.detect = {
       // detect if scroll position has changed
       scroll: function(e){
         var current = {
           top: window.pageYOffset,
           left: window.pageXOffset
         }
-        if(current.top != self.scroll.top || current.left != self.scroll.left){
-          for(var i=0; i<self.events.scroll.length; i++){
-            self.events.scroll[i].callback();
-          }
+        // exit if scroll positions have not changed
+        if(current.top == self.scroll.top && current.left == self.scroll.left) return;
+        // loop throught hooks on scroll event
+        for(var i=0; i<self.events.scroll.length; i++){
+          var hook = self.events.scroll[i]
+          hook.callback(hook);
         }
+        self.scroll = current;
       },
       // detect if pointer has moved
       pointermove: function(e){
@@ -92,48 +132,68 @@
     //
     //
     // RAF on()
+     // arguments order is not important
+    // window.raf.on(type:string, delegate:$(), callback:function(), data:{})
     this.on = function(){
-
-      // arguments passed to the function will go here
-      var event = {
-        type: false,
-        callback: false,
-        data: false,
-        delegate: false
-      };
-
-      // parse arguments
-      for(var i=0; i<arguments.length; i++){
-        var arg = arguments[i];
-        var type = typeof arg;
-        if(type=='string') event.type = arg;
-        if(type=='function') event.callback = arg;
-        if(type=='object') event.data = arg;
-        if(arg instanceof jQuery) event.$selection = arg;
-      }
-
-      // create / append event
-      var eventIndex = self.events.indexOf(event.type);
-      if(eventIndex<0){
-        self.events[event.type] = [];
+      // parse arguments into a new event
+      var hook = hookObj.apply(this, arguments);
+      // exit if event type is not set
+      if(!hook.event) return false;
+      // create / append hook
+      if(!self.events[hook.event]){
+        // create new event
+        self.events[hook.event] = [];
+        // update count
         self.eventsCount = count(self.events);
       }
-      self.events[event.type].push(event);
-
+      // push hook into event
+      self.events[hook.event].push(hook);
       // start raf
       self.start();
-
+      // return raf object
+      return self;
     }
+    //
+    //
+    // RAF off()
+    // arguments order is not important
+    // window.raf.off(type:string, delegate:$(), callback:function(), data:{}, unsetEntireEvent:bool)
+    this.off = function(){
+      // parse arguments into a new event
+      var hook = hookObj.apply(this, arguments);
+      // exit if event is not found
+      if(!self.events[hook.event]) return false;
+      // get event for this hook
+      var event = self.events[hook.event];
+      // remove whole event if is not set for a specific selection
+      if(hook.delegate===true) unset(hook.event, self.events)
+      // else, remove only hook
+      else{
+        // get hook index
+        var hookIndex = findHook(hook, event);
+        // if hook is found, unset it
+        if(hookIndex>0) unset(hookIndex, event);
+        // if event is empty, unset it
+        if(event.length==0) unset(hook.event, self.events);
+      }
+      // update count
+      self.eventsCount = count(self.events);
+      // stop raf if there's no more events
+      if(!self.eventsCount) return self.stop();
+      // return raf object
+      return self;
+    }
+
 
     // loop animation
     this.loop = function() {
-      // stop loop if no event to check
+      // stop loop if no event to detect
       if(!self.eventsCount) return self.stop();
       // parse each event
       for(var e in self.events){
-        if(e=='scroll') self.check.scroll(e);
-        if(e=='pointermove') self.check.pointermove(e);
-      };
+        if(e=='scroll') self.detect.scroll(e);
+        if(e=='pointermove') self.detect.pointermove(e);
+      }
       // request another frame
       self.request = window.requestAnimationFrame(self.loop);
     }
@@ -141,6 +201,7 @@
     // start animation
     this.start = function(){
       if(!self.request) self.loop();
+      return self;
     }
 
     // stop animation
@@ -149,11 +210,15 @@
         window.cancelAnimationFrame(self.request);
         self.request = undefined;
       }
+      return self;
     }
 
-    return self;
-
+    //
+    //
+    //  return raf object
+    return;
   }
+
 
 
 
@@ -161,6 +226,7 @@
   //
   // JQUERY INIT
   $(document).ready(function(){
+    // init RAF
     window.raf = new raf();
   });
 

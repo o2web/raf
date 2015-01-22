@@ -110,14 +110,14 @@ function minMax(n,min,max){
 				( update && e.b <= se.t )
 		){
 			if(activate&&!e.up) e.isVisible=false;
-			if(callback) e.container.off('scroll', e.travel);
+			if(callback) window.raf.off(e.container, 'scroll', e.travel);
 		}
 		if(
 				( e.isVisible && e.t >= se.b ) ||
 				( update && e.t >= se.b )
 		){
 			if(activate&&!e.down) e.isVisible=false;
-			if(callback) e.container.off('scroll', e.travel);
+			if(callback) window.raf.off(e.container, 'scroll', e.travel);
 		}
 		if(
 				( !e.isVisible && e.t < se.b && e.b > se.t ) ||
@@ -125,7 +125,7 @@ function minMax(n,min,max){
 		){
 			if(activate&&!e.visible) e.isVisible=true;
 			if(callback || update){
-				e.container.on('scroll', {
+				window.raf.on(e.container, 'scroll', {
 					delta: function(){return minMax(Math.round( ( se.t - (e.t - se.wh) ) / ( e.h + e.offset + e.offsetBottom + se.wh) * e.round)/e.round, 0, 1) },
 					selection: e.selection,
 					index: e.i,
@@ -269,9 +269,10 @@ function minMax(n,min,max){
 				this.ev.sort(sortEvents);
 			});
 
-			// $win.off('scroll', eventScroller).off('resize',resizeScroller);
+			// declare event if not already there
+			// if(!window.raf.events['scroll'])
 			window.raf.on('scroll', eventScroller);
-			$win.on('resize',resizeScroller);
+			$win.off('resize',resizeScroller).on('resize',resizeScroller);
 			return this;
 		}
 	});
@@ -353,7 +354,8 @@ function minMax(n,min,max){
 
 	function parseMethods(selection, args, flag, options){
 		if(args=='destroy'){
-			$win.off('scroll', eventScroller).off('resize',resizeScroller);
+			window.raf.off('scroll', eventScroller)
+			$win.off('resize',resizeScroller);
 			window.items = [];
 		}
 		else if(args=='resize'){
@@ -405,7 +407,7 @@ function minMax(n,min,max){
 									if(ev.flag==flag){
 										if(args=='disable'){
 											ev.disabled = true;
-											if(ev.travel) e.container.off('scroll', ev.travel);
+											if(ev.travel) window.raf.off(e.container, 'scroll', ev.travel);
 										}
 										else if(args=='enable'){
 											ev.disabled = false;
@@ -421,7 +423,7 @@ function minMax(n,min,max){
 								else{
 									if(args=='disable'){
 										ev.disabled = true;
-										if(ev.travel) ev.container.off('scroll', ev.travel);
+										if(ev.travel) window.raf.off(e.container, 'scroll', ev.travel);
 									}
 									else if(args=='enable'){
 										ev.disabled = false;

@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="assets/css/application.css">
     <script src="assets/js/modernizr.custom.js"></script>
      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="assets/js/scrollEvents.js"></script>
     <script src="../raf.js"></script>
+    <script src="assets/js/scrollEvents.js"></script>
+    <script src="assets/js/sticky.js"></script>
+    <script src="assets/js/parallax.js"></script>
     <script src="assets/js/demo.js"></script>
   </head>
   <body>
@@ -23,29 +25,213 @@
 
 	  		<div class="container message">
 	  			ScrollEvents using raf. Should be smoother.
-	  			<div><em>Scroll to see.
+	  			<div><em>Scroll to see.</em></div>
 	  		</div>
 
 	  	</section>
 
-	  	<section class="demo-scrollevent">
-	  		<h2>1</h2>
-	  		<div class="message container translate left">
-	  		</div>
+	  	<section class="demo-1 ">
+        <h2>1</h2>
+        <div class="message container translate left">
+          Visible : Retire la classe <em>left</em><br/>
+          Down : Ajoute la classe <em>left</em>
+        </div>
 
-		  	<div class="container">
-		  		<code class="eval">
-$('.demo-scrollevent .message').scrollEvents({
-	visible: function(event){
-		event.selection.removeClass('left');
-	},
-	down: function(event){
-		event.selection.addClass('left');
-	}
+        <div class="container">
+          <code class="eval">
+$('.demo-1 .message').scrollEvents({
+  visible: function(event){
+    event.selection.removeClass('left');
+  },
+  down: function(event){
+    event.selection.addClass('left');
+  }
 });
-				</code>
-	  		</div>
-		</section>
+        </code>
+        </div>
+    </section>
+
+
+    <section class="demo-2 dark">
+        <h2>2</h2>
+        <div class="message container color">
+          Activation avec un <em>offset</em>
+        </div>
+
+        <div class="container">
+          <code class="eval">
+$('.demo-2 .message').scrollEvents({
+  offset: 300,
+  topUp: function(event){
+    event.selection.addClass('turquoise');
+  },
+  topDown: function(event){
+    event.selection.removeClass('turquoise');
+  }
+});
+        </code>
+        </div>
+    </section>
+
+    <section class="demo-3">
+        <h2>3</h2>
+        <div class="message container">
+          Delta : <em>0</em>
+        </div>
+        <div class="overlay delta"></div>
+
+        <div class="container">
+          <code class="eval">
+$('.demo-3').scrollEvents({
+  travel: function(event){
+    var delta = event.data.delta();
+    $('.message em', event.data.selection).html(delta);
+    $('.demo-3 .overlay').width((delta*100)+'%');
+  }
+});
+        </code>
+        </div>
+    </section>
+
+    <section class="demo-4 dark">
+        <h2>4</h2>
+        <div class="message sticky container">
+          <nav>
+            Sticky
+          </nav>
+        </div>
+        <div class="overlay delta"></div>
+
+        <div class="container">
+          <code class="eval">
+$('.demo-4 nav').sticky({
+  offset: 50,
+  offsetBottom: 50,
+  container: $('.demo-4 .sticky.container'),
+  fixed: function(e){
+    e.selection.removeClass('contained').addClass('sticked').html('Sticked');
+  },
+  contained: function(e){
+    e.selection.removeClass('sticked').addClass('contained').html('Contained');
+  },
+  reset: function(e){
+    e.selection.removeClass('sticked contained').html('Sticky');
+  }
+});
+        </code>
+        </div>
+    </section>
+
+
+    <section class="demo-5">
+        <h2>5</h2>
+        <div class="message container">
+          Animation avec le callback <em>travel</em>
+        </div>
+        <div class="dino"></div>
+
+        <div class="container">
+          <code class="eval">
+// Animation du background-position
+$('.demo-5').scrollEvents({
+  travel: function(e){
+    var dino = $('.demo-5 .dino')[0];
+    var delta = e.data.delta();
+    dino.style.left = ((delta*200)-50)+'%';
+    dino.style.backgroundPosition = '0px ' + ((delta*200)%10*-150) +'px';
+  }
+});
+
+
+// Methodes enable & disable
+$('.demo-5 button').on('click', function(){
+  var active = $(this).toggleClass('active').hasClass('active');
+  $('.demo-5').scrollEvents( active ? 'disable' : 'enable' );
+});
+
+$('.demo-5 button').sticky({
+  offset: 50,
+  offsetBottom: 50,
+  container: $('.demo-5'),
+  reset: function(e){
+    e.selection.removeClass('sticked contained');
+  },
+  fixed: function(e){
+    e.selection.removeClass('contained').addClass('sticked');
+  },
+  contained: function(e){
+    e.selection.removeClass('sticked').addClass('contained');
+  }
+});
+        </code>
+        </div>
+
+        <button>
+          <span class="idle">Désactiver</span>
+          <span class="hover">Activer</span>
+        </button>
+
+    </section>
+
+    <section class="demo-6 dark">
+        <h2>6</h2>
+        <div class="message inverted container">
+          <nav>
+            Inverted Sticky
+          </nav>
+        </div>
+        <div class="overlay delta"></div>
+
+        <div class="container">
+          <code class="eval">
+// Désactivé dans le demo parce que ça met le message en position fixed quand on arrive sur la page.
+
+// $('.demo-6 nav').sticky({
+//  inverted: true,
+//  fixedTop: function(e){
+//    console.log('top');
+//    e.selection.addClass('fixed top');
+//  },
+//  scrolling: function(e){
+//    e.selection.removeClass('fixed top bottom');
+//  },
+//  fixedBottom: function(e){
+//    e.selection.addClass('fixed bottom');
+//  }
+// });
+        </code>
+        </div>
+    </section>
+
+    <section class="demo-parallax">
+        <h2>7</h2>
+        <div class="message container">
+          Effet <em class="violet">parallax</em>, avec scrollEvents&thinsp;!
+        </div>
+        <div class="overlay delta"></div>
+
+        <div class="container">
+          <code class="eval">
+// Parallax
+$('.demo-parallax [z]').parallax();
+
+
+        </code>
+        </div>
+
+        <div class="circles">
+          <div class="message container">
+          </div>
+        </div>
+
+    </section>
+
+
+    <section class="enjoy dark">
+        <div class="message container">
+          Enjoy
+        </div>
+    </section>
 
 	 </div>
   </body>
