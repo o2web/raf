@@ -21,7 +21,7 @@
     "touchmove",
     "scrol"
   ],
-  "license": "MIT",
+  "license": "GPL v2",
   "homepage": "http://o2web.ca",
   "ignore": [
     "**/.*",
