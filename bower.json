@@ -1,0 +1,33 @@
+{
+  "name": "raf",
+  "main": "raf.js",
+  "version": "0.1",
+  "authors": [
+    "Charles Thibault <cthibault@o2web.ca>"
+  ],
+  "description": "requestAnimationFrame handler by o2web",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "raf",
+    "request",
+    "animation",
+    "frame",
+    "o2web",
+    "requestAnimationFrame",
+    "mousemove",
+    "pointer",
+    "touchmove",
+    "scrol"
+  ],
+  "license": "MIT",
+  "homepage": "o2web.ca",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
