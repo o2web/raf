@@ -155,30 +155,38 @@
       top: window.pageYOffset,
       left: window.pageYOffset
     };
+
     // window data
-    this.win = $.extend(
-      getDomPropCombo(
-        [window, html], // EX. element: document.body
-        ['inner', 'client'] // EX. prefix: 'inner'
-      ),
-      {
-        width: 0,
-        height: 0,
-      }
-    );
+    this.win =  { width:0, height:0 };
     // document data
-    this.doc = $.extend(
-      getDomPropCombo(
-        [body, html], // EX. element: document.body
-        ['inner', 'client'] // EX. prefix: 'inner'
-      ),
-      {
-        width: 0,
-        height: 0,
-      }
-    );
+    this.doc = { width:0, height:0 };
+
     // pointer data
     this.pointer = {x:0, y:0};
+
+    //
+    //
+    // RAF get window and document data used for resize detection
+    this.updateDataSources = function(){
+      // get window data sources
+      self.win = $.extend(
+        self.win,
+        getDomPropCombo(
+          [window, html], // EX. element: window
+          ['inner', 'client'] // EX. prefix: 'inner'
+        )
+      );
+      // get document data sources
+      self.doc = $.extend(
+        self.doc,
+        getDomPropCombo(
+          [body, html], // EX. element: document.body
+          ['inner', 'client', 'offset'] // EX. prefix: 'inner'
+        )
+      );
+    };
+    // update data used for resize
+    this.updateDataSources();
 
     //
     //
@@ -249,15 +257,18 @@
           width: self.doc.element[self.doc.prefix+'Width'],
           height: self.doc.element[self.doc.prefix+'Height']
         };
-        // exit if window size have not changed
+        // check if document size is the same as previous frame
         if(current.width === self.doc.width && current.height === self.doc.height) {
-          if(!self.doc.last) { return; }
-          self.doc.last = undefined;
+          // if last frame didn't change document size, exit now
+          if(!self.doc.sizeChanged) { return; }
+          // if last frame  did change document size, and current frame is the same as last frame, trigger "afterDocumentResize"
+          delete self.doc.sizeChanged;
           triggerHooks(self.events.afterdocumentresize);
           return;
         }
-        // set last
-        self.doc.last = true;
+        // document size has changed
+        // keep track that document changed size on previous frame
+        self.doc.sizeChanged = true;
         // set new document sizes
         self.doc.width = current.width;
         self.doc.height = current.height;
