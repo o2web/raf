@@ -2,7 +2,7 @@
 // o2web.ca
 // 2015
 
-(function($) {
+var factory = function($) {
 
   // jquery window
   var $win = $(window);
@@ -385,15 +385,23 @@
     return;
   }
 
+  // init RAF
+  return new Raf();
+};
 
 
-
-  //
-  //
-  // JQUERY INIT
-  $(document).ready(function(){
-    // init RAF
-    window.raf = new Raf();
-  });
-
-}(jQuery));
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    //
+    //
+    // Define AMD module
+    define(['jquery'], factory);
+  } else {
+    //
+    //
+    // JQUERY INIT
+    $(document).ready(function(){
+      root.raf = factory();
+    });
+  }
+}(this, factory));
