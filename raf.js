@@ -16,12 +16,11 @@
   var vendors = ['ms', 'moz', 'webkit', 'o'];
   for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
     window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-    window.cancelAnimationFrame =
-    window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
   }
 
-  if (!window.requestAnimationFrame)
-    window.requestAnimationFrame = function(callback, element) {
+  if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function(callback) {
       var currTime = new Date().getTime();
       var timeToCall = Math.max(0, 16 - (currTime - lastTime));
       var id = window.setTimeout(function() { callback(currTime + timeToCall); },
@@ -29,11 +28,13 @@
       lastTime = currTime + timeToCall;
       return id;
     };
+  }
 
-  if (!window.cancelAnimationFrame)
+  if (!window.cancelAnimationFrame) {
     window.cancelAnimationFrame = function(id) {
       clearTimeout(id);
     };
+  }
 
 
   //
@@ -41,68 +42,73 @@
   // HELPERS
 
   // count keys in object array
-  count = function(obj){
+  var count = function(obj){
     var count = 0;
-    for(var key in obj)
-      if (obj.hasOwnProperty(key))
+    for(var key in obj) {
+      if (obj.hasOwnProperty(key)) {
         count++;
+      }
+    }
     return count;
-  }
+  };
 
   // unset key in array
-  unset = function(key, array){
-    if(typeof key == 'string'){
+  var unset = function(key, array){
+    if(typeof key === 'string') {
       var value = array[key];
       delete array[key];
       return value;
     }
     return array.splice(key, 1);
-  }
+  };
 
   // get dom element/prop combo
-  getDomPropCombo = function(elements, prefixes){
+  var getDomPropCombo = function(elements, prefixes){
     var test = 0;
     var result = {
       element: undefined,
       prefix: undefined
-    }
-    for(var e=0; e<elements.length; e++)
-      for(var p=0; p<prefixes.length; p++)
+    };
+    for(var e=0; e<elements.length; e++) {
+      for(var p=0; p<prefixes.length; p++) {
         if( prefixes[p]+'Height' in elements[e] && elements[e][prefixes[p]+'Height'] > test ){
           test = elements[e][prefixes[p]+'Height'];
           result = {
             element: elements[e],
             prefix: prefixes[p]
-          }
+          };
         }
+      }
+    }
     return result;
-  }
+  };
 
   // find hook inside an event's array
-  findHook = function(hook, event){
+  var findHook = function(hook, event){
     var key = -1;
-    for(var i=0; i<event.length; i++)
-      if(event[i].delegate == hook.delegate && event[i].callback == hook.callback) key = i;
+    for(var i=0; i<event.length; i++) {
+      if(event[i].delegate === hook.delegate && event[i].callback === hook.callback) { key = i; }
+    }
     return key;
-  }
+  };
 
   // trigger hooks for an event
-  triggerHooks = function(event, data){
-    if(!event) return false;
-    if(data && typeof data != 'object') data = false;
+  var triggerHooks = function(event, data){
+    if(!event) { return false; }
+    if(data && typeof data !== 'object') { data = false; }
     for(var e=0; e<event.length; e++){
       var hook = event[e];
       if(hook.callback){
-        if(data) hook = $.extend(data, hook);
+        if(data) { hook = $.extend(data, hook); }
         hook.callback(hook);
       }
     }
-  }
+  };
 
   // track pointer position on mouse/touch move
-  trackPointer = function(e){
+  var trackPointer = function(e){
     e.data.self.newPointer = { x: e.pageX, y: e.pageY };
-  }
+  };
 
   //
   //
@@ -120,10 +126,10 @@
     for(var i=0; i<arguments.length; i++){
       var arg = arguments[i];
       var type = typeof arg;
-      if(type=='string') hook.event = arg
-      else if(arg instanceof jQuery || type=='boolean') hook.delegate = arg
-      else if(type=='function') hook.callback = arg
-      else if(type=='object') hook.data = arg;
+      if(type === 'string') { hook.event = arg; }
+      else if(arg instanceof jQuery || type === 'boolean') { hook.delegate = arg; }
+      else if(type === 'function') { hook.callback = arg; }
+      else if(type === 'object') { hook.data = arg; }
     }
     return hook;
   }
@@ -133,7 +139,7 @@
   // RAF
   // structure :
   // raf -> events -> hooks -> callback()
-  function raf(){
+  function Raf(){
     //
     //
     // SETUP
@@ -152,7 +158,7 @@
     // window data
     this.win = $.extend(
       getDomPropCombo(
-        [window, document.documentElement], // EX. element: document.body
+        [window, html], // EX. element: document.body
         ['inner', 'client'] // EX. prefix: 'inner'
       ),
       {
@@ -163,7 +169,7 @@
     // document data
     this.doc = $.extend(
       getDomPropCombo(
-        [document.body, document.documentElement], // EX. element: document.body
+        [body, html], // EX. element: document.body
         ['inner', 'client'] // EX. prefix: 'inner'
       ),
       {
@@ -187,7 +193,7 @@
         // start tracking pointer position on window
         $win.on('mousemove touchmove', {self:self}, trackPointer);
       },
-    }
+    };
 
     //
     //
@@ -202,7 +208,7 @@
         // stop tracking pointer position on window
         $win.off('mousemove touchmove', trackPointer);
       }
-    }
+    };
 
     //
     //
@@ -213,9 +219,9 @@
         var current = {
           top: window.pageYOffset,
           left: window.pageXOffset
-        }
+        };
         // exit if scroll positions have not changed
-        if(current.top == self.scroll.top && current.left == self.scroll.left) return;
+        if(current.top === self.scroll.top && current.left === self.scroll.left) { return; }
         // set new scroll positions
         self.scroll = current;
         // loop throught hooks on scroll event
@@ -227,9 +233,9 @@
         var current = {
           width: self.win.element[self.win.prefix+'Width'],
           height: self.win.element[self.win.prefix+'Height']
-        }
+        };
         // exit if window size have not changed
-        if(current.width == self.win.width && current.height == self.win.height) return;
+        if(current.width === self.win.width && current.height === self.win.height) { return; }
         // set new window sizes
         self.win.width = current.width;
         self.win.height = current.height;
@@ -242,10 +248,10 @@
         var current = {
           width: self.doc.element[self.doc.prefix+'Width'],
           height: self.doc.element[self.doc.prefix+'Height']
-        }
+        };
         // exit if window size have not changed
-        if(current.width == self.doc.width && current.height == self.doc.height){
-          if(!self.doc.last) return;
+        if(current.width === self.doc.width && current.height === self.doc.height) {
+          if(!self.doc.last) { return; }
           self.doc.last = undefined;
           triggerHooks(self.events.afterdocumentresize);
           return;
@@ -262,9 +268,9 @@
       // detect if pointer has moved
       pointermove: function(){
         // exit here if there is no pointer new position
-        if(!self.newPointer) return;
+        if(!self.newPointer) { return; }
         // exit if position is the same
-        if( self.pointer.x == self.newPointer.x && self.pointer.y == self.newPointer.y ) return;
+        if( self.pointer.x === self.newPointer.x && self.pointer.y === self.newPointer.y ) { return; }
         // set new pointer position and erase old one
         self.pointer = self.newPointer;
         self.newPointer = undefined;
@@ -281,7 +287,7 @@
         // update count
         self.eventsCount = count(self.events);
       }
-    }
+    };
 
     //
     //
@@ -292,7 +298,7 @@
       // parse arguments into a new event
       var hook = hookObj.apply(this, arguments);
       // exit if event type is not set
-      if(!hook.event) return self;
+      if(!hook.event) { return self; }
       // create / append hook
       if(!self.events[hook.event]){
         // create new event
@@ -300,7 +306,7 @@
         // update count
         self.eventsCount = count(self.events);
         // if an init function exists for this event, trigger it;
-        if(self.inits[hook.event]) self.inits[hook.event]();
+        if(self.inits[hook.event]) { self.inits[hook.event](); }
       }
       // push hook into event
       self.events[hook.event].push(hook);
@@ -308,7 +314,7 @@
       self.start();
       // return raf object
       return self;
-    }
+    };
     //
     //
     // RAF off()
@@ -318,51 +324,51 @@
       // parse arguments into a new event
       var hook = hookObj.apply(this, arguments);
       // exit if event is not found
-      if(!self.events[hook.event]) return self;
+      if(!self.events[hook.event]) { return self; }
       // get event for this hook
       var event = self.events[hook.event];
       // remove whole event if is not set for a specific selection
-      if(hook.delegate===true) unset(hook.event, self.events)
+      if(hook.delegate===true) { unset(hook.event, self.events); }
       // else, remove only hook
       else{
         // get hook index
         var hookIndex = findHook(hook, event);
         // if hook is found, unset it
-        if(hookIndex>-1) unset(hookIndex, event);
+        if(hookIndex >- 1) { unset(hookIndex, event); }
         // if event is empty, unset it
-        if(event.length==0){
+        if(event.length === 0){
           // unset event
           unset(hook.event, self.events);
           // if a kill function exists fot this event, trigger it;
-          if(self.kills[hook.event]) self.kills[hook.event]();
+          if(self.kills[hook.event]) { self.kills[hook.event](); }
         }
       }
       // update count
       self.eventsCount = count(self.events);
       // stop raf if there's no more events
-      if(!self.eventsCount) return self.stop();
+      if(!self.eventsCount) { return self.stop(); }
       // return raf object
       return self;
-    }
+    };
 
 
     // loop animation
     this.loop = function() {
       // stop loop if no event to detect
-      if(!self.eventsCount) return self.stop();
+      if(!self.eventsCount) { return self.stop(); }
       // parse each event
       for(var e in self.events){
-        if(self.detect[e]) self.detect[e]();
+        if(self.detect[e]) { self.detect[e](); }
       }
       // request another frame
       self.request = window.requestAnimationFrame(self.loop);
-    }
+    };
 
     // start animation
     this.start = function(){
-      if(!self.request) self.loop();
+      if(!self.request) { self.loop(); }
       return self;
-    }
+    };
 
     // stop animation
     this.stop = function(){
@@ -371,7 +377,7 @@
         self.request = undefined;
       }
       return self;
-    }
+    };
 
     //
     //
@@ -387,7 +393,7 @@
   // JQUERY INIT
   $(document).ready(function(){
     // init RAF
-    window.raf = new raf();
+    window.raf = new Raf();
   });
 
 }(jQuery));
