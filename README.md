@@ -2,6 +2,8 @@
 
 RequestAnimationFrame handler is made to increase performance of events fired by the window element
 
+Supports AMD / CommonJS loaders
+
 ## Data
 
 All raf.js data you might need is stored in a global variable named raf.
