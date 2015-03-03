@@ -2,7 +2,26 @@
 // o2web.ca
 // 2015
 
-var factory = function($) {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    //
+    //
+    // Define AMD module
+    define(['jquery'], factory);
+  } else {
+    //
+    //
+    // JQUERY INIT
+    jQuery(document).ready(function($){
+      root.raf = factory($);
+    });
+  }
+
+}(this, function($){
+
+  //
+  //
+  // FACTORY
 
   // jquery window
   var $win = $(window);
@@ -398,21 +417,5 @@ var factory = function($) {
 
   // init RAF
   return new Raf();
-};
 
-
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    //
-    //
-    // Define AMD module
-    define(['jquery'], factory);
-  } else {
-    //
-    //
-    // JQUERY INIT
-    $(document).ready(function(){
-      root.raf = factory();
-    });
-  }
-}(this, factory));
+}));
