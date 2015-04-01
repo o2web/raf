@@ -33,14 +33,18 @@ All raf.js data you might need is stored in a global variable named raf.
 
 ## Available events
 
-- Scroll
-- Pointer move
-- Window resize
-- Document resize
+- scroll
+- pointermove
+- windowresize
+- documentresize
+- afterwindowresize
+- afterdocumentresize
 
 ## Hooking your callback onto an event
 
-	window.raf.on('scroll', myCallback);
+	window.raf.on('scroll', myScrollCallback);
+	window.raf.on('documentresize', myResizeCallback);
+	window.raf.on('afterdocumentresize', myHeavyResizeCallback);
 
 ## Removing your callback from an event
 
