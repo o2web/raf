@@ -2,9 +2,27 @@
 // o2web.ca
 // 2015
 
-(function($) {
+//
+//
+// DEFINE MODULE
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // Define AMD module
+    define(['jquery'], factory);
+  } else {
+    // JQUERY INIT
+    factory(jQuery);
+  }
+
+}
+
+//
+//
+// MAIN CODE
+(this, function($){
 
   // jquery window
+  var root = this;
   var $win = $(window);
 
   // RAF polyfill
@@ -70,13 +88,15 @@
       prefix: undefined
     };
     for(var e=0; e<elements.length; e++) {
-      for(var p=0; p<prefixes.length; p++) {
-        if( prefixes[p]+'Height' in elements[e] && elements[e][prefixes[p]+'Height'] > test ){
-          test = elements[e][prefixes[p]+'Height'];
-          result = {
-            element: elements[e],
-            prefix: prefixes[p]
-          };
+      if(elements[e]){
+        for(var p=0; p<prefixes.length; p++) {
+          if( prefixes[p]+'Height' in elements[e] && elements[e][prefixes[p]+'Height'] > test ){
+            test = elements[e][prefixes[p]+'Height'];
+            result = {
+              element: elements[e],
+              prefix: prefixes[p]
+            };
+          }
         }
       }
     }
@@ -127,7 +147,7 @@
       var arg = arguments[i];
       var type = typeof arg;
       if(type === 'string') { hook.event = arg; }
-      else if(arg instanceof jQuery || type === 'boolean') { hook.delegate = arg; }
+      else if(arg instanceof $ || type === 'boolean') { hook.delegate = arg; }
       else if(type === 'function') { hook.callback = arg; }
       else if(type === 'object') { hook.data = arg; }
     }
@@ -172,7 +192,7 @@
       self.win = $.extend(
         self.win,
         getDomPropCombo(
-          [window, html], // EX. element: window
+          [root, html], // EX. element: window
           ['inner', 'client'] // EX. prefix: 'inner'
         )
       );
@@ -196,6 +216,10 @@
       afterdocumentresize: function(){
         self.on('documentresize', $(self));
       },
+      // init afterwindowresize
+      afterwindowresize: function(){
+        self.on('resize', $(self));
+      },
       // init pointermove
       pointermove: function(){
         // start tracking pointer position on window
@@ -210,6 +234,10 @@
       // kill afterdocumentresize
       afterdocumentresize: function(){
         self.off('documentresize', $(self));
+      },
+      // kill afterwindowresize
+      afterwindowresize: function(){
+        self.off('resize', $(self));
       },
       // kill pointerpove
       pointermove: function(){
@@ -243,7 +271,15 @@
           height: self.win.element[self.win.prefix+'Height']
         };
         // exit if window size have not changed
-        if(current.width === self.win.width && current.height === self.win.height) { return; }
+        if(current.width === self.win.width && current.height === self.win.height) { 
+          // if last frame didn't change window size, exit now
+          if(!self.win.sizeChanged) { return; }
+          // if last frame  did change window size, and current frame is the same as last frame, trigger "afterDocumentResize"
+          delete self.win.sizeChanged;
+          triggerHooks(self.events.afterwindowresize);
+          return;
+        }
+        self.win.sizeChanged = true;
         // set new window sizes
         self.win.width = current.width;
         self.win.height = current.height;
@@ -396,15 +432,12 @@
     return;
   }
 
+  // init RAF
+  root.raf = new Raf();
 
-
-
-  //
-  //
-  // JQUERY INIT
   $(document).ready(function(){
-    // init RAF
-    window.raf = new Raf();
-  });
+    root.raf.updateDataSources();
+  })
 
-}(jQuery));
+}));
+
