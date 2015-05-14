@@ -153,7 +153,7 @@
       var arg = arguments[i];
       var type = typeof arg;
       if(type=='string') hook.event = arg
-      else if(arg instanceof jQuery || type=='boolean') hook.delegate = arg
+      else if( (type=='object' && arg.jquery) || type=='boolean') hook.delegate = arg
       else if(type=='function') hook.callback = arg
       else if(type=='object') hook.data = arg
       else if(type=='number') hook.ref = arg;
