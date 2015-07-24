@@ -39,6 +39,8 @@ All raf.js data you might need is stored in a global variable named raf.
 - documentresize
 - afterwindowresize
 - afterdocumentresize
+- nextframe
+- eachframe
 
 ## Hooking your callback onto an event
 

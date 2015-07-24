@@ -1,6 +1,9 @@
-// raf.js
-// o2web.ca
-// 2015
+/*
+* raf.js
+* o2web.ca
+* 2015
+* GPL v2 License
+*/
 
 //
 //
@@ -105,12 +108,17 @@
 
   // find hook inside an event's array
   var findHook = function(hook, event){
-    var key = -1;
-    for(var i=0; i<event.length; i++) {
-      if(event[i].delegate === hook.delegate && event[i].callback === hook.callback) { key = i; }
-    }
-    return key;
-  };
+    if(hook.ref)
+      for(var i=0; i<event.length; i++)
+        if(event[i].ref == hook.ref)
+          return i
+    else
+      for(var i=0; i<event.length; i++)
+        if(event[i].delegate[0] == hook.delegate[0])
+          if(event[i].callback == hook.callback)
+            return i;
+    return -1;
+  }
 
   // trigger hooks for an event
   var triggerHooks = function(event, data){
@@ -139,17 +147,19 @@
       event: false,
       callback: false,
       data: false,
-      delegate: $win
+      delegate: $win,
+      ref: false
     };
 
     // parse arguments based on their types
     for(var i=0; i<arguments.length; i++){
       var arg = arguments[i];
       var type = typeof arg;
-      if(type === 'string') { hook.event = arg; }
-      else if(arg instanceof $ || type === 'boolean') { hook.delegate = arg; }
-      else if(type === 'function') { hook.callback = arg; }
-      else if(type === 'object') { hook.data = arg; }
+      if(type=='string') hook.event = arg
+      else if( (type=='object' && arg.jquery) || type=='boolean') hook.delegate = arg
+      else if(type=='function') hook.callback = arg
+      else if(type=='object') hook.data = arg
+      else if(type=='number') hook.ref = arg;
     }
     return hook;
   }
@@ -168,6 +178,10 @@
     var html = document.documentElement;
     // events holder
     this.events = [];
+    // events counter
+    this.eventsCount = 0;
+    // reference counter
+    this.refCounter = 0;
     // raf request
     this.request = undefined;
     //  scroll data
@@ -333,19 +347,26 @@
         unset('nextframe', self.events);
         // update count
         self.eventsCount = count(self.events);
+      },
+
+      // runs on every frame
+      eachframe: function(){
+        triggerHooks(self.events.eachframe);
       }
     };
 
     //
     //
     // RAF on()
-     // arguments order is not important
-    // window.raf.on(type:string, delegate:$(), callback:function(), data:{})
+    // arguments order is not important
+    // window.raf.on(type:string, ref:number, delegate:$(), callback:function(), data:{})
     this.on = function(){
       // parse arguments into a new event
       var hook = hookObj.apply(this, arguments);
       // exit if event type is not set
-      if(!hook.event) { return self; }
+      if(!hook.event) return self;
+      // increment ref counter and add new reference number to current hook
+      hook.ref = self.refCounter++;
       // create / append hook
       if(!self.events[hook.event]){
         // create new event
@@ -353,56 +374,77 @@
         // update count
         self.eventsCount = count(self.events);
         // if an init function exists for this event, trigger it;
-        if(self.inits[hook.event]) { self.inits[hook.event](); }
+        if(self.inits[hook.event]) self.inits[hook.event]();
       }
       // push hook into event
       self.events[hook.event].push(hook);
       // start raf
-      self.start();
+      self.init();
       // return raf object
-      return self;
-    };
+      return hook;
+    }
     //
     //
     // RAF off()
     // arguments order is not important
-    // window.raf.off(type:string, delegate:$(), callback:function(), data:{}, unsetEntireEvent:bool)
+    // window.raf.off(type:string, ref:number, delegate:$(), callback:function(), data:{}, unsetEntireEvent:bool)
     this.off = function(){
       // parse arguments into a new event
       var hook = hookObj.apply(this, arguments);
       // exit if event is not found
-      if(!self.events[hook.event]) { return self; }
+      if(!self.events[hook.event] && !self.events[hook.ref]) return self;
       // get event for this hook
       var event = self.events[hook.event];
       // remove whole event if is not set for a specific selection
-      if(hook.delegate===true) { unset(hook.event, self.events); }
+      if(hook.delegate===true) unset(hook.event, self.events)
       // else, remove only hook
       else{
         // get hook index
         var hookIndex = findHook(hook, event);
         // if hook is found, unset it
-        if(hookIndex >- 1) { unset(hookIndex, event); }
+        if(hookIndex>-1) unset(hookIndex, event);
         // if event is empty, unset it
-        if(event.length === 0){
+        if(event.length==0){
           // unset event
           unset(hook.event, self.events);
           // if a kill function exists fot this event, trigger it;
-          if(self.kills[hook.event]) { self.kills[hook.event](); }
+          if(self.kills[hook.event]) self.kills[hook.event]();
         }
+        hook.ref = undefined;
       }
       // update count
       self.eventsCount = count(self.events);
       // stop raf if there's no more events
-      if(!self.eventsCount) { return self.stop(); }
+      if(!self.eventsCount) self.kill();
       // return raf object
-      return self;
-    };
+      return hook;
+    }
 
+    //
+    //
+    // ALIASES
+
+    // play() - alias for raf.on('eachframe', callback);
+    this.play = function(){
+      [].push.call(arguments, 'eachframe');
+      return self.on.apply(this, arguments);
+    }
+
+    // stop() - alias for raf.off('eachframe', callback);
+    this.stop = function(){
+      [].push.call(arguments, 'eachframe');
+      return self.off.apply(this, arguments);
+    }
+
+
+    //
+    //
+    // REQUEST ANIMATION FRAME LOOP
 
     // loop animation
     this.loop = function() {
       // stop loop if no event to detect
-      if(!self.eventsCount) { return self.stop(); }
+      if(!self.eventsCount) { return self.kill(); }
       // parse each event
       for(var e in self.events){
         if(self.detect[e]) { self.detect[e](); }
@@ -411,14 +453,14 @@
       self.request = window.requestAnimationFrame(self.loop);
     };
 
-    // start animation
-    this.start = function(){
+    // init animation
+    this.init = function(){
       if(!self.request) { self.loop(); }
       return self;
     };
 
     // stop animation
-    this.stop = function(){
+    this.kill = function(){
       if(self.request){
         window.cancelAnimationFrame(self.request);
         self.request = undefined;

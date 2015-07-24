@@ -1,11 +1,11 @@
 {
   "name": "raf",
   "main": "raf.min.js",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "authors": [
     "Charles Thibault <cthibault@o2web.ca>"
   ],
-  "description": "requestAnimationFrame handler by o2web",
+  "description": "Smarter events using requestAnimationFrame, by o2web",
   "moduleType": [
     "globals"
   ],
@@ -16,10 +16,13 @@
     "request",
     "animation",
     "frame",
+    "events",
+    "js",
+    "javascript",
     "mousemove",
     "pointer",
     "touchmove",
-    "scrol"
+    "scroll"
   ],
   "license": "GPL v2",
   "homepage": "http://o2web.ca",
