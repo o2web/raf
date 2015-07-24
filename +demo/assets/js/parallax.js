@@ -38,7 +38,7 @@
         offset: el.z ? (parallax.options.perspective * Math.abs(el.z)) : 0,
         offsetBottom: el.z ? (parallax.options.perspective * Math.abs(el.z)) : 0,
         travel: function(e){
-          var el = e.data.selection[0];
+          var el = e.data.$selection[0];
           var z = el.z;
           var delta = z>0 ? 1 - e.data.delta() : e.data.delta();
           var travel = (parallax.options.perspective* Math.abs(z) )

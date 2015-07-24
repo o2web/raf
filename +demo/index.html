@@ -40,11 +40,11 @@
         <div class="container">
           <code class="eval">
 $('.demo-1 .message').scrollEvents({
-  visible: function(event){
-    event.selection.removeClass('left');
+  visible: function(e){
+    e.$selection.removeClass('left');
   },
-  down: function(event){
-    event.selection.addClass('left');
+  down: function(e){
+    e.$selection.addClass('left');
   }
 });
         </code>
@@ -62,11 +62,11 @@ $('.demo-1 .message').scrollEvents({
           <code class="eval">
 $('.demo-2 .message').scrollEvents({
   offset: 300,
-  topUp: function(event){
-    event.selection.addClass('turquoise');
+  topUp: function(e){
+    e.$selection.addClass('turquoise');
   },
-  topDown: function(event){
-    event.selection.removeClass('turquoise');
+  topDown: function(e){
+    e.$selection.removeClass('turquoise');
   }
 });
         </code>
@@ -83,9 +83,9 @@ $('.demo-2 .message').scrollEvents({
         <div class="container">
           <code class="eval">
 $('.demo-3').scrollEvents({
-  travel: function(event){
-    var delta = event.data.delta();
-    $('.message em', event.data.selection).html(delta);
+  travel: function(e){
+    var delta = e.data.delta();
+    $('.message em', e.data.$selection).html(delta);
     $('.demo-3 .overlay').width((delta*100)+'%');
   }
 });
@@ -109,13 +109,13 @@ $('.demo-4 nav').sticky({
   offsetBottom: 50,
   container: $('.demo-4 .sticky.container'),
   fixed: function(e){
-    e.selection.removeClass('contained').addClass('sticked').html('Sticked');
+    e.$selection.removeClass('contained').addClass('sticked').html('Sticked');
   },
   contained: function(e){
-    e.selection.removeClass('sticked').addClass('contained').html('Contained');
+    e.$selection.removeClass('sticked').addClass('contained').html('Contained');
   },
   reset: function(e){
-    e.selection.removeClass('sticked contained').html('Sticky');
+    e.$selection.removeClass('sticked contained').html('Sticky');
   }
 });
         </code>
@@ -154,13 +154,13 @@ $('.demo-5 button').sticky({
   offsetBottom: 50,
   container: $('.demo-5'),
   reset: function(e){
-    e.selection.removeClass('sticked contained');
+    e.$selection.removeClass('sticked contained');
   },
   fixed: function(e){
-    e.selection.removeClass('contained').addClass('sticked');
+    e.$selection.removeClass('contained').addClass('sticked');
   },
   contained: function(e){
-    e.selection.removeClass('sticked').addClass('contained');
+    e.$selection.removeClass('sticked').addClass('contained');
   }
 });
         </code>
@@ -189,14 +189,13 @@ $('.demo-5 button').sticky({
 // $('.demo-6 nav').sticky({
 //  inverted: true,
 //  fixedTop: function(e){
-//    console.log('top');
-//    e.selection.addClass('fixed top');
+//    e.$selection.addClass('fixed top');
 //  },
 //  scrolling: function(e){
-//    e.selection.removeClass('fixed top bottom');
+//    e.$selection.removeClass('fixed top bottom');
 //  },
 //  fixedBottom: function(e){
-//    e.selection.addClass('fixed bottom');
+//    e.$selection.addClass('fixed bottom');
 //  }
 // });
         </code>

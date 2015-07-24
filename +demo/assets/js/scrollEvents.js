@@ -2,17 +2,33 @@
 //
 // O2 WEB
 // o2web.ca
-// Tous droits réservés
-// All rights reserved
 // 2014
 
-(function($){
+//
+//
+// DEFINE MODULE
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // Define AMD module
+    define(['jquery', 'raf'], factory);
+  } else {
+    // JQUERY INIT
+    factory(jQuery);
+  }
+}
+
+//
+//
+// MAIN CODE
+(this, function($){
+
+	var root = this;
 	$win = $(window);
 
 	//
 	//
 	// GLOBAL VARIABLES
-	window.se = {
+	root.scrollEvents = {
 		selection: [],
 		t:$win.scrollTop(),
 		b:$win.height(),
@@ -52,16 +68,20 @@
 	// sort callbacks by closest to top
 	sortCallbacksByDistance = function(a,b){
 		var distA = a.e.topUp || a.e.topDown ?
-									Math.abs(se.t - a.e.t) :
-									Math.abs(se.b - a.e.b) ;
+									Math.abs(scrollEvents.t - a.e.t) :
+									Math.abs(scrollEvents.b - a.e.b) ;
 		var distB = b.e.topUp || b.e.topDown ?
-									Math.abs(se.t - b.e.t) :
-									Math.abs(se.b - b.e.b) ;
+									Math.abs(scrollEvents.t - b.e.t) :
+									Math.abs(scrollEvents.b - b.e.b) ;
 		return 	distA < distB ? 1
 					: distA > distB ? -1
 					: 0
 	}
 
+	// Move check up or down
+	moveCheck = function(check, move){
+
+	}
 
 
 	//
@@ -69,8 +89,8 @@
 	// CHECKS
 	function checkUp(e, activate, callback, update){
 		if(
-				( e.isVisible && e.b <= se.t ) ||
-				( update && e.b <= se.t )
+				( e.isVisible && e.b <= scrollEvents.t ) ||
+				( update && e.b <= scrollEvents.t )
 			){
 			if(activate) e.isVisible=false;
 			if(!update && callback) e.up(e)
@@ -80,8 +100,8 @@
 	}
 	function checkDown(e, activate, callback, update){
 		if(
-				( e.isVisible && e.t >= se.b ) ||
-				( update  && e.t >= se.b )
+				( e.isVisible && e.t >= scrollEvents.b ) ||
+				( update  && e.t >= scrollEvents.b )
 			){
 			if(activate) e.isVisible=false;
 			if(!update && callback) e.down(e)
@@ -91,8 +111,8 @@
 	}
 	function checkVisible(e, activate, callback, update){
 		if(
-				( !e.isVisible && e.t < se.b && e.b > se.t ) ||
-				( update && e.t < se.b && e.b > se.t)
+				( !e.isVisible && e.t < scrollEvents.b && e.b > scrollEvents.t ) ||
+				( update && e.t < scrollEvents.b && e.b > scrollEvents.t)
 			){
 			if(activate) e.isVisible=true;
 			if(!update && callback) e.visible(e)
@@ -102,8 +122,8 @@
 	}
 	function checkTopUp(e, activate, callback, update){
 		if(
-				( e.isTopVisible && e.t <= se.t ) ||
-				( update && e.t <= se.t )
+				( e.isTopVisible && e.t <= scrollEvents.t ) ||
+				( update && e.t <= scrollEvents.t )
 		){
 			if(activate) e.isTopVisible = false;
 			if(!update && callback) e.topUp(e)
@@ -114,8 +134,8 @@
 	function checkTopDown(e, activate, callback, update){
 
 		if(
-				( !e.isTopVisible && e.t > se.t ) ||
-				( update && e.t > se.t )
+				( !e.isTopVisible && e.t > scrollEvents.t ) ||
+				( update && e.t > scrollEvents.t )
 		){
 			if(activate) e.isTopVisible = true;
 			if(!update && callback) e.topDown(e)
@@ -126,8 +146,8 @@
 	function checkBottomUp(e, activate, callback, update){
 
 		if(
-				( e.isBottomVisible && e.b < se.b ) ||
-				( update && e.b < se.b )
+				( e.isBottomVisible && e.b < scrollEvents.b ) ||
+				( update && e.b < scrollEvents.b )
 		){
 			if(activate) e.isBottomVisible = false;
 			if(!update && callback) e.bottomUp(e)
@@ -138,8 +158,8 @@
 	function checkBottomDown(e, activate, callback, update){
 
 		if(
-				( !e.isBottomVisible && e.b >= se.b ) ||
-				( update && e.b >= se.b )
+				( !e.isBottomVisible && e.b >= scrollEvents.b ) ||
+				( update && e.b >= scrollEvents.b )
 		){
 			if(activate) e.isBottomVisible = true;
 			if(!update && callback) e.bottomDown(e)
@@ -149,31 +169,32 @@
 	}
 	function checkTravel(e, activate, callback, update){
 		if(
-				( e.isVisible && e.b <= se.t ) ||
-				( update && e.b <= se.t )
+				( e.isVisible && e.b <= scrollEvents.t ) ||
+				( update && e.b <= scrollEvents.t )
 		){
-			if(activate&&!e.up) e.isVisible=false;
-			if(callback) window.raf.off(e.container, 'scroll', e.travel);
+			if( activate&&!e.up ) e.isVisible=false;
+			if( callback || update ) e.rafref = root.raf.off(e.rafref, e.$container, 'scroll', e.travel).ref;
 		}
 		if(
-				( e.isVisible && e.t >= se.b ) ||
-				( update && e.t >= se.b )
+				( e.isVisible && e.t >= scrollEvents.b ) ||
+				( update && e.t >= scrollEvents.b )
 		){
-			if(activate&&!e.down) e.isVisible=false;
-			if(callback) window.raf.off(e.container, 'scroll', e.travel);
+			if( activate&&!e.down ) e.isVisible=false;
+			if( callback || update ) e.rafref = root.raf.off(e.rafref, e.$container, 'scroll', e.travel).ref;
 		}
 		if(
-				( !e.isVisible && e.t < se.b && e.b > se.t ) ||
-				( update &&  e.t < se.b && e.b > se.t )
+				( !e.isVisible && e.t < scrollEvents.b && e.b > scrollEvents.t ) ||
+				( update &&  e.t < scrollEvents.b && e.b > scrollEvents.t )
 		){
 			if(activate&&!e.visible) e.isVisible=true;
 			if(callback || update){
-				window.raf.on(e.container, 'scroll', {
-					delta: function(){return minMax(Math.round( ( se.t - (e.t - se.wh) ) / ( e.h + e.offset + e.offsetBottom + se.wh) * e.round)/e.round, 0, 1) },
-					selection: e.selection,
+				if(e.rafref) root.raf.off(e.rafref, e.$container, 'scroll', e.travel);
+				e.rafref = root.raf.on(e.$container, 'scroll', {
+					delta: function(){return minMax(Math.round( ( scrollEvents.t - (e.t - scrollEvents.wh) ) / ( e.h + e.offset + e.offsetBottom + scrollEvents.wh) * e.round)/e.round, 0, 1) },
+					$selection: e.$selection,
 					index: e.i,
 					height: e.h
-				}, e.travel);
+				}, e.travel).ref;
 			}
 		}
 	}
@@ -260,11 +281,12 @@
 			var update = true;
 			var stack = [];
 		}
-		se.t = $win.scrollTop();
-		se.b = se.t+se.wh;
-		for(var i=0; i<se.selection.length; i++){
-			var el = se.selection[i];
-			for(var j=0; j<el.ev.length; j++) (function(e){
+		var oldT = scrollEvents.t;
+		scrollEvents.t = $win.scrollTop();
+		scrollEvents.b = scrollEvents.t+scrollEvents.wh;
+		for(var i=0; i<scrollEvents.selection.length; i++){
+			var el = scrollEvents.selection[i];
+			for(var j=0; j<el.scrollEvents.length; j++) (function(e){
 				if(!e.disabled){
 					for(var k=0; k<e.checks.length; k++){
 						var c = e.checks[k];
@@ -272,31 +294,39 @@
 						if(call) stack.push({callback: call, e:e});
 					}
 				}
-			})(el.ev[j]);
+			})(el.scrollEvents[j]);
 		};
 		//if update, sort callbacks by distance from
 		if(update && stack.length){
 			stack.sort(sortCallbacksByDistance);
 			for(var s=0; s<stack.length; s++)
-				if(typeof stack[s].callback == 'function')
+				if(!!stack[s].callback)
 					stack[s].callback(stack[s].e);
+			// scrollEvents.direction = 'update';
 		}
+		// else{
+			scrollEvents.direction = 	scrollEvents.t > oldT ?
+																	'down' :
+																	scrollEvents.t < oldT ?
+																		'up' :
+																			'idle';
+		// }
 	}
 
 	//
 	//
 	// RECALCULATE SIZES AND POSITIONS
 	function recalculate(){
-		se.wh = $win.height();
-		for(var i=0; i<se.selection.length; i++){
-			var $el = $(se.selection[i]);
+		scrollEvents.wh = $win.height();
+		for(var i=0; i<scrollEvents.selection.length; i++){
+			var $el = $(scrollEvents.selection[i]);
 			var el = $el[0];
-			var h =  $el.outerHeight();
+			var h =  $el[0].offsetHeight;
 			el.style.position = el.initialStates.position;
 			el.style.top = el.initialStates.top;
 			var t = Math.round($el.offset().top);
-			for(var j=0; j<el.ev.length;j++){
-				var e = el.ev[j];
+			for(var j=0; j<el.scrollEvents.length;j++){
+				var e = el.scrollEvents[j];
 				e.h = h;
 				e.t = t - e.offset;
 				e.b = e.t + e.h + e.offsetBottom;
@@ -310,7 +340,7 @@
 	//
 	// RECALCULATE ON RESIZE
 	function resizeScroller(){
-		window.raf.on('nextframe', function(){
+		root.raf.on('nextframe', function(){
 			recalculate();
 			eventScroller(true);
 		});
@@ -321,12 +351,7 @@
 	//
 	// METHODS AND WHAT TO DO WITH 'EM
 	function parseMethods(selection, args, flag, options){
-		if(args=='destroy'){
-			window.raf.off('scroll', eventScroller)
-			window.raf.on('afterdocumentresize', resizeScroller);
-			window.se.selection = [];
-		}
-		else if(args=='resize'){
+		if(args=='resize'){
 			resizeScroller();
 		}
 		else if(args=='trigger'){
@@ -336,6 +361,7 @@
 			resizeScroller('update');
 		}
 		else if(
+			args=='destroy' ||
 			args=='disable' ||
 			args=='enable' ||
 			args=='remove' ||
@@ -347,14 +373,14 @@
 			var removed = [];
 			var returned = [];
 			for(var i=0; i<selection.length; i++){
-				var it = selection[i];
-				if(it.ev){
-					if(args=='remove'){
-						removed.push(it);
+				var el = selection[i];
+				if(el.scrollEvents){
+					if(args=='destroy' || args=='remove'){
+						removed.push(el);
 					}
 					else{
-						for(var j=0;j<it.ev.length;j++){
-							var ev = it.ev[j];
+						for(var j=0;j<el.scrollEvents.length;j++){
+							var ev = el.scrollEvents[j];
 							if(args=='eval'){
 
 								var o = options && typeof(options=='string') ? options : flag;
@@ -364,8 +390,8 @@
 									if(o=='travel'){
 										return {
 											data: {
-													delta: function(){return Math.round( ( se.t - (ev.t - se.wh) ) / ( ev.h + se.wh) *100)/100 },
-													selection: ev.selection,
+													delta: function(){return Math.round( ( scrollEvents.t - (ev.t - scrollEvents.wh) ) / ( ev.h + scrollEvents.wh) *100)/100 },
+													selection: ev.$selection,
 													index: ev.i,
 													height: ev.h
 												}
@@ -384,7 +410,7 @@
 										if(args=='disable'){
 											ev.disabled = true;
 											if(ev.travel)
-												window.raf.off(ev.container, 'scroll', ev.travel);
+												root.raf.off(ev.$container, 'scroll', ev.travel);
 											if(ev.disable && typeof ev.disable == 'function')
 												ev.disable(ev);
 										}
@@ -408,7 +434,7 @@
 								else{
 									if(args=='disable'){
 										ev.disabled = true;
-										if(ev.travel) window.raf.off(ev.container, 'scroll', ev.travel);
+										if(ev.travel) root.raf.off(ev.$container, 'scroll', ev.travel);
 									}
 									else if(args=='enable'){
 										ev.disabled = false;
@@ -430,18 +456,28 @@
 				}
 			}
 
-			if(args=='remove'){
-				removed.sort(function(a, b){return b.ev.se-a.ev.se});
+			if(args=='destroy' || args=='remove'){
+				removed.sort(function(a, b){return b.scrollEvents.se-a.scrollEvents.se});
 				for(var k=0;k<removed.length; k++){
-					var e = removed[k];
-					if(e.ev && !e.ev.travel) window.raf.off(e.container, 'scroll', e.ev.visibleFn);
-					se.selection.splice(e.ev.se,1);
+					var el = removed[k];
+					if(el.scrollEvents)
+						for(var e=0; e<el.scrollEvents.length; e++)
+							if(el.scrollEvents[e].travel)
+								root.raf.off(el.scrollEvents[e].rafref, el.$container, 'scroll', el.scrollEvents[e].travel);
+					scrollEvents.selection.splice(el.scrollEvents.se,1);
+					el.scrollEvents = [];
 				}
-				for(var i=0; i<se.selection.length; i++){
-					se.selection[i].ev.se = i;
+				for(var i=0; i<scrollEvents.selection.length; i++){
+					scrollEvents.selection[i].scrollEvents.se = i;
 				}
 			}
-			else if(args=='get'){
+
+			if(args=='destroy' || !scrollEvents.selection.length){
+				root.raf.off(scrollEvents.scrollRafref, 'scroll', eventScroller);
+				root.raf.off(scrollEvents.resizeRafref, 'afterdocumentresize', resizeScroller);
+			}
+
+			if(args=='get'){
 				return returned;
 			}
 		}
@@ -460,8 +496,8 @@
 
 			$(this).each(function(k,v){
 				var e = $.extend(true,{
-						selection: $(this),
-						container: $win,
+						$selection: $(this),
+						$container: $win,
 						flag: false,
 						order: 0,
 						offset: 0,
@@ -480,13 +516,15 @@
 						disable: false,
 						enable: false,
 						//
+						direction: 'idle',
+						//
 						isVisible: false,
 						isTopVisible: false,
 						isBottomVisible: false,
 						//
-						h: $(this).outerHeight(),
+						h: this.offsetHeight,
 						t: 0,
-						b: $(this).outerHeight(),
+						b: this.offsetHeight,
 						i: k,
 						disabled: false,
 						checks: []
@@ -499,31 +537,31 @@
 				//
 				//
 				var duplicate = false;
-				for(var i=0; i<se.selection.length; i++ ){
-					if(se.selection[i]==this){
+				for(var i=0; i<scrollEvents.selection.length; i++ ){
+					if(scrollEvents.selection[i]==this){
 						duplicate = true;
 					}
 				}
 				if(!duplicate){
-					se.selection.push(this);
-					e.se = se.selection.length;
+					scrollEvents.selection.push(this);
+					e.se = scrollEvents.selection.length;
 					this.initialStates = {
 					 	position: $(this).css('position'),
 					 	top: $(this).css('top')
 					};
 				}
-				if(!this.ev){
-					this.ev = [];
+				if(!this.scrollEvents){
+					this.scrollEvents = [];
 				}
-				this.ev.push(e);
-				this.ev.sort(sortByOrder);
+				this.scrollEvents.push(e);
+				this.scrollEvents.sort(sortByOrder);
 			});
 
 			// un hook events, then rehook 'em
-			window.raf.off('scroll', eventScroller)
-				.on('scroll', eventScroller);
-			window.raf.off('afterdocumentresize', resizeScroller)
-				.on('afterdocumentresize', resizeScroller);
+			if(scrollEvents.scrollRafref != undefined) root.raf.off(scrollEvents.scrollRafref, 'scroll', eventScroller);
+			scrollEvents.scrollRafref = root.raf.on('scroll', eventScroller).ref;
+			if(scrollEvents.resizeRafref != undefined) root.raf.off(scrollEvents.resizeRafref, 'afterdocumentresize',  resizeScroller);
+			scrollEvents.resizeRafref = root.raf.on('afterdocumentresize', resizeScroller).ref;
 			return this;
 		}
 	});
@@ -536,4 +574,4 @@
 		resizeScroller('update');
 	});
 
-})(jQuery);
+}));
