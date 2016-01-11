@@ -1,9 +1,6 @@
-/*
-* raf.js
-* o2web.ca
-* 2015
-* GPL v2 License
-*/
+// raf.js
+// o2web.ca
+// 2015
 
 //
 //
@@ -108,15 +105,22 @@
 
   // find hook inside an event's array
   var findHook = function(hook, event){
-    if(hook.ref)
-      for(var i=0; i<event.length; i++)
-        if(event[i].ref == hook.ref)
-          return i
-    else
-      for(var i=0; i<event.length; i++)
-        if(event[i].delegate[0] == hook.delegate[0])
-          if(event[i].callback == hook.callback)
+    if(hook.ref){
+      for(var i=0; i<event.length; i++){
+        if(event[i].ref == hook.ref){
+          return i;
+        }
+      }
+    }
+    else{
+      for(var i=0; i<event.length; i++){
+        if(event[i].delegate[0] == hook.delegate[0]){
+          if(event[i].callback == hook.callback){
             return i;
+          }
+        }
+      }
+    }
     return -1;
   }
 
@@ -482,4 +486,3 @@
   })
 
 }));
-
