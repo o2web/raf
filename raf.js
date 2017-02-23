@@ -185,7 +185,7 @@
     // events counter
     this.eventsCount = 0;
     // reference counter
-    this.refCounter = 0;
+    this.refCounter = 1;
     // raf request
     this.request = undefined;
     //  scroll data
