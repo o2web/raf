@@ -1,0 +1,34 @@
+{
+  "name": "o2-raf",
+  "version": "1.4.2",
+  "description": "Smarter events using requestAnimationFrame, by o2web",
+  "keywords": [
+    "o2web",
+    "raf",
+    "requestAnimationFrame",
+    "request",
+    "animation",
+    "frame",
+    "events",
+    "js",
+    "javascript",
+    "mousemove",
+    "pointer",
+    "touchmove",
+    "scroll"
+  ],
+  "homepage": "http://o2web.ca",
+  "bugs": {
+    "url": "https://github.com/o2web/raf/issues"
+  },
+  "license": "GPL-2.0",
+  "author": "Charles Thibault <cthibault@o2web.ca>",
+  "files": [
+    "raf.min.js"
+  ],
+  "main": "raf.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/o2web/raf.git"
+  }
+}
