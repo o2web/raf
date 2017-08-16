@@ -30,5 +30,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/o2web/raf.git"
+  },
+  "dependencies": {
+    "jquery": ">=1.11"
   }
 }
