@@ -1,14 +1,7 @@
 {
-  "name": "raf",
-  "main": "raf.min.js",
-  "version": "1.4.1",
-  "authors": [
-    "Charles Thibault <cthibault@o2web.ca>"
-  ],
+  "name": "o2-raf",
+  "version": "1.4.2",
   "description": "Smarter events using requestAnimationFrame, by o2web",
-  "moduleType": [
-    "globals"
-  ],
   "keywords": [
     "o2web",
     "raf",
@@ -24,16 +17,20 @@
     "touchmove",
     "scroll"
   ],
-  "license": "GPL v2",
   "homepage": "http://o2web.ca",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "+demo"
+  "bugs": {
+    "url": "https://github.com/o2web/raf/issues"
+  },
+  "license": "GPL-2.0",
+  "author": "Charles Thibault <cthibault@o2web.ca>",
+  "files": [
+    "raf.min.js"
   ],
+  "main": "raf.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/o2web/raf.git"
+  },
   "dependencies": {
     "jquery": ">=1.11"
   }
