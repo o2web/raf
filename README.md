@@ -1,7 +1,6 @@
 # raf.js
 
 RequestAnimationFrame handler is made to increase performance of events fired by the window element
-
 Supports AMD / CommonJS loaders
 
 ## Data
